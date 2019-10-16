@@ -8,75 +8,75 @@ compute_seed = -1
 cube_list = []
 cube_list_index = 0
 
-def compute_cubes():
-	global compute_seed
-	global test_seed
-	global cube_list
-	global cube_list_index
-	cube_digits = len(str(test_seed ** 3))
-	if len(cube_list) > 0:
-		if len(str(cube_list[0])) == cube_digits:
-			return
-	
-	print("computing cubes of length " + str(cube_digits))
-	cube_list = []
-	
-	# calculate minimum compute seed if necessary
-	# assume test seed is minimum and linear search lower values until digit cutoff is reached
-	if compute_seed == -1:
-		compute_seed = test_seed
-		while True:
-			compute_seed -= 1
-			cube = compute_seed ** 3
-			if len(str(cube)) < cube_digits:
-				compute_seed += 1
-				break
-	
-	cube_list_index = test_seed - compute_seed
-	
-	# generate cube list
-	while True:
-		cube = compute_seed ** 3
-		if len(str(cube)) > cube_digits:
-			break
-		cube_list.append(cube)
-		compute_seed += 1
 
-	#print(cube_list)
+def compute_cubes():
+    global compute_seed
+    global test_seed
+    global cube_list
+    global cube_list_index
+    cube_digits = len(str(test_seed ** 3))
+    if len(cube_list) > 0:
+        if len(str(cube_list[0])) == cube_digits:
+            return
+    
+    print("computing cubes of length " + str(cube_digits))
+    cube_list = []
+    
+    # calculate minimum compute seed if necessary
+    # assume test seed is minimum and linear search lower values until digit cutoff is reached
+    if compute_seed == -1:
+        compute_seed = test_seed
+        while True:
+            compute_seed -= 1
+            cube = compute_seed ** 3
+            if len(str(cube)) < cube_digits:
+                compute_seed += 1
+                break
+    
+    cube_list_index = test_seed - compute_seed
+    
+    # generate cube list
+    while True:
+        cube = compute_seed ** 3
+        if len(str(cube)) > cube_digits:
+            break
+        cube_list.append(cube)
+        compute_seed += 1
+
 
 def compute_perms(c):
-	global cube_list	
-	cube_perms = []
-	cube_index = 0
-	perms = unique_permutations(list(str(c)))
-	p = int(''.join(next(perms, ['0'])))
-	
-	# find matches between cube list and permutations list
-	while cube_index < len(cube_list):
-		# match: store cube and increment both lists
-		if cube_list[cube_index] == p:
-			cube_perms.append(p)
-			cube_index += 1
-			p = int(''.join(next(perms, ['0'])))
-		# cube is smaller than perm: increment cube
-		elif cube_list[cube_index] < p:
-			cube_index += 1
-		# perm is smaller than cube: increment perm
-		else:
-			p = int(''.join(next(perms, ['0'])))
-			
-		# stop if matches exceeds target or if all permutations have been tested
-		if len(cube_perms) > target_perms or p == 0:
-			break
-	
-	# if solution is valid, return
-	if len(cube_perms) == target_perms:
-		print(cube_perms)
-		return True
-	
-	# if the solution is invalid, c is not a member of the solution set; remove it
-	cube_list.remove(c)
-	return False
+    global cube_list    
+    cube_perms = []
+    cube_index = 0
+    perms = unique_permutations(list(str(c)))
+    p = int(''.join(next(perms, ['0'])))
+    
+    # find matches between cube list and permutations list
+    while cube_index < len(cube_list):
+        # match: store cube and increment both lists
+        if cube_list[cube_index] == p:
+            cube_perms.append(p)
+            cube_index += 1
+            p = int(''.join(next(perms, ['0'])))
+        # cube is smaller than perm: increment cube
+        elif cube_list[cube_index] < p:
+            cube_index += 1
+        # perm is smaller than cube: increment perm
+        else:
+            p = int(''.join(next(perms, ['0'])))
+            
+        # stop if matches exceeds target or if all permutations have been tested
+        if len(cube_perms) > target_perms or p == 0:
+            break
+    
+    # if solution is valid, return
+    if len(cube_perms) == target_perms:
+        print(cube_perms)
+        return True
+    
+    # if the solution is invalid, c is not a member of the solution set; remove it
+    cube_list.remove(c)
+    return False
 
 
 def unique_permutations(seq):
@@ -125,45 +125,45 @@ def unique_permutations(seq):
         # Reverse the part after but not                           k
         # including k, also efficiently.                     0 0 1 1 0 0 1 1
         seq[k + 1:] = seq[-1:k:-1]
-		
+        
 
 # Returns index of x in cube_list if present, else -1 
 def binary_search(l, r, x):
 
-	global cube_list
-	
-	# Check base case 
-	if r >= l: 
+    global cube_list
+    
+    # Check base case 
+    if r >= l: 
   
-		mid = math.floor(l + (r - l)/2)
-		# print("L = " + str(l) + " R = " + str(r) + " mid = " + str(mid) + " x = " + str(x))
-		# print(cube_list)
+        mid = math.floor(l + (r - l)/2)
+        # print("L = " + str(l) + " R = " + str(r) + " mid = " + str(mid) + " x = " + str(x))
+        # print(cube_list)
 
-		# If element is present at the middle itself 
-		if cube_list[mid] == x: 
-			return mid
-		
-		# If element is smaller than mid, then it can only be present in left subarray 
-		elif cube_list[mid] > x: 
-			return binary_search(l, mid-1, x) 
-		
-		# Else the element can only be present in right subarray 
-		else:
-			return binary_search(mid+1, r, x)
+        # If element is present at the middle itself 
+        if cube_list[mid] == x: 
+            return mid
+        
+        # If element is smaller than mid, then it can only be present in left subarray 
+        elif cube_list[mid] > x: 
+            return binary_search(l, mid-1, x) 
+        
+        # Else the element can only be present in right subarray 
+        else:
+            return binary_search(mid+1, r, x)
 
-	else: 
-		# Element is not present in the array
-		return -1
+    else: 
+        # Element is not present in the array
+        return -1
 
 
 while True:
-	# debug
-	test_seed += 1
-	print("seed = " + str(test_seed))
-	
-	# ensure all cubes with the current number of digits have been computed
-	compute_cubes()
-	
-	# compute permutations of the next cube in the list and check for matches
-	if compute_perms(cube_list[cube_list_index]):
-		break
+    # debug
+    test_seed += 1
+    print("seed = " + str(test_seed))
+    
+    # ensure all cubes with the current number of digits have been computed
+    compute_cubes()
+    
+    # compute permutations of the next cube in the list and check for matches
+    if compute_perms(cube_list[cube_list_index]):
+        break
